@@ -10,7 +10,7 @@ class GridTests(TestCase):
     def test_create_grid(self):
         client = APIClient()
         response = client.post('/grids/', {}, format='json')
-        # print(response.status_code)
+        # test that database has the grid
         self.assertEqual(response.status_code, 201)
         self.assertEquals(response.json()['animation_order'], '')
 
@@ -23,4 +23,19 @@ class GridTests(TestCase):
         self.assertEqual(response.json(), test_grid.to_dict())
 
     def test_save_animation_order(self):
-        pass
+        test_grid = Grid(animation_order='')
+        test_grid.save()
+        client = APIClient()
+        response = client.patch(
+            f'/grids/{test_grid.id}', {'animationOrder': '12345'}, format='json')
+        updated_grid = Grid.objects.get(pk=test_grid.id)
+
+        # Animation order gets updated, but ID doesn't
+        self.assertEqual(test_grid.id, updated_grid.id)
+        self.assertEqual(updated_grid.animation_order, '12345')
+
+        # Response status code and correct JSON
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), updated_grid.to_dict())
+        self.assertEqual(
+            response.json()['animation_order'], updated_grid.animation_order)

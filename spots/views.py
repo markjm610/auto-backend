@@ -17,7 +17,7 @@ def create_grid(request):
 
 
 @api_view(['GET', 'PATCH'])
-def retrieve_or_save_animation_order(request, grid_id):
+def retrieve_or_update_animation_order(request, grid_id):
 
     if request.method == 'GET':
         grid = Grid.objects.get(pk=grid_id)
