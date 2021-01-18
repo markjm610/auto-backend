@@ -13,7 +13,7 @@ def create_grid(request):
     if request.method == 'POST':
         grid = Grid(animation_order='')
         grid.save()
-        return JsonResponse(grid.to_dict())
+        return JsonResponse(grid.to_dict(), status=201)
 
 
 @api_view(['GET', 'PATCH'])
