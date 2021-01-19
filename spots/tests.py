@@ -17,7 +17,7 @@ class GridTests(TestCase):
         # Response status code and correct JSON in response
         self.assertEqual(response.status_code, 201)
         self.assertEquals(response.json()['animation_order'], '')
-        self.assertEquals(response.json()['color'], 'blue')
+        self.assertEquals(len(response.json()['squares']), 30)
 
     def test_retrieve_animation_order(self):
         test_grid = Grid(animation_order='')
