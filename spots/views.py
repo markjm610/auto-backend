@@ -11,7 +11,7 @@ from .models import Grid
 def create_grid(request):
 
     if request.method == 'POST':
-        grid = Grid(animation_order='')
+        grid = Grid()
         grid.save()
         return JsonResponse(grid.to_dict(), status=201)
 
