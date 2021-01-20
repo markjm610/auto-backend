@@ -27,7 +27,7 @@ def create_grid(request):
 
 
 @api_view(['GET', 'PATCH'])
-def retrieve_or_update_animation_order(request, grid_id):
+def retrieve_or_update_grid(request, grid_id):
 
     if request.method == 'GET':
         # Find grid with ID
@@ -37,7 +37,7 @@ def retrieve_or_update_animation_order(request, grid_id):
         squares = [square.to_dict()
                    for square in Square.objects.filter(grid=grid_id).order_by('id')]
 
-        # Convert Grid object to list dictionary and add squares key equal to squares list
+        # Convert Grid object to list dictionary and set squares key to squares list
         response_grid = grid.to_dict()
         response_grid['squares'] = squares
 
@@ -52,6 +52,19 @@ def retrieve_or_update_animation_order(request, grid_id):
         grid = Grid.objects.get(pk=grid_id)
         grid.animation_order = data['animationOrder']
         grid.save()
+
+        # If specific square colors need to be updated, update them
+        if 'squareColors' in data:
+            for square in data['squareColors']:
+                square_to_update = Square.objects.get(pk=square['id'])
+                square_to_update.color = square['color']
+                square_to_update.save()
+        # If no square colors are on the request, it means this is a reset, so reset all colors to their defaults
+        else:
+            squares = Square.objects.filter(grid=grid_id)
+            for square in squares:
+                square.color = 'blue'
+                square.save()
 
         return JsonResponse(grid.to_dict())
 

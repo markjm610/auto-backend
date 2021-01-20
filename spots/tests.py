@@ -4,8 +4,6 @@ from rest_framework.test import APIClient
 from .models import Grid, Square
 import json
 
-# def create_grid_and_squares():
-
 
 class GridTests(TestCase):
 
@@ -39,15 +37,24 @@ class GridTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), test_response_grid)
 
-    def test_save_animation_order(self):
+    def test_update_grid(self):
         # Create test grid
         test_grid = Grid(animation_order='')
         test_grid.save()
 
+        # Create squares and save a few square IDs for a request later
+        saved_square_ids = []
+
+        for i in range(0, 30):
+            new_square = Square(grid=test_grid)
+            new_square.save()
+            if i == 3 or i == 10 or i == 20 or i == 24:
+                saved_square_ids.append(new_square.id)
+
         # Mock response
         client = APIClient()
         response = client.patch(
-            f'/grids/{test_grid.id}', {'animationOrder': '12345'}, format='json')
+            f'/grids/{test_grid.id}', {'animationOrder': '1,2,3,4,5'}, format='json')
         updated_grid = Grid.objects.get(pk=test_grid.id)
 
         # Animation order gets updated, but ID doesn't
@@ -56,13 +63,35 @@ class GridTests(TestCase):
                             updated_grid.animation_order)
 
         # Animation order is updated to correct value
-        self.assertEqual(updated_grid.animation_order, '12345')
+        self.assertEqual(updated_grid.animation_order, '1,2,3,4,5')
+
+        # Colors are all reset when there is no squareColors key in the request
+        squares = Square.objects.filter(grid=updated_grid)
+        for square in squares:
+            self.assertEqual(square.color, 'blue')
 
         # Response status code and correct JSON in response
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), updated_grid.to_dict())
         self.assertEqual(
             response.json()['animation_order'], updated_grid.animation_order)
+
+        # Correct square colors are reset when there is a squareColors key in the request using saved square IDs from above
+        response = client.patch(
+            f'/grids/{test_grid.id}', {'animationOrder': '1,2,3,4,5', 'squareColors': [{'id': saved_square_ids[0], 'color': 'red'}, {'id': saved_square_ids[1], 'color': 'green'}, {'id': saved_square_ids[2], 'color': 'blue'}]}, format='json')
+        self.assertEqual(Square.objects.get(
+            pk=saved_square_ids[0]).color, 'red')
+        self.assertEqual(Square.objects.get(
+            pk=saved_square_ids[1]).color, 'green')
+        self.assertEqual(Square.objects.get(
+            pk=saved_square_ids[2]).color, 'blue')
+        # This last one wasn't edited
+        self.assertEqual(Square.objects.get(
+            pk=saved_square_ids[3]).color, 'blue')
+
+        # Grid is still updated
+        updated_grid = Grid.objects.get(pk=test_grid.id)
+        self.assertEqual(updated_grid.animation_order, '1,2,3,4,5')
 
     def test_update_square(self):
         # Making test grid and test square
