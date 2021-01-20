@@ -4,8 +4,6 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from .models import Grid, Square
 
-# Create your views here.
-
 
 @api_view(['POST'])
 def create_grid(request):
