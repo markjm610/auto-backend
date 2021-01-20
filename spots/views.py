@@ -32,9 +32,19 @@ def create_grid(request):
 def retrieve_or_update_animation_order(request, grid_id):
 
     if request.method == 'GET':
-        # Need to add squares
+        # Find grid with ID
         grid = Grid.objects.get(pk=grid_id)
-        return JsonResponse(grid.to_dict())
+
+        # Find squares for that grid and convert to a list of dictionaries
+        squares = [square.to_dict()
+                   for square in Square.objects.filter(grid=grid_id)]
+
+        # Convert Grid object to list dictionary and add squares key equal to squares list
+        response_grid = grid.to_dict()
+        response_grid['squares'] = squares
+
+        # Send grid dictionary back as JSON
+        return JsonResponse(response_grid)
 
     if request.method == 'PATCH':
         # Parse request data from JSON
@@ -46,3 +56,16 @@ def retrieve_or_update_animation_order(request, grid_id):
         grid.save()
 
         return JsonResponse(grid.to_dict())
+
+
+@api_view(['PATCH'])
+def update_square(request, square_id):
+    # Parse request data from JSON
+    data = JSONParser().parse(request)
+
+    # Find square to update and update color
+    square = Square.objects.get(pk=square_id)
+    square.color = data['color']
+    square.save()
+
+    return JsonResponse(square.to_dict())
