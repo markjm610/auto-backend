@@ -50,7 +50,7 @@ def retrieve_or_update_grid(request, grid_id):
 
 ```
 
-# Test for that view:
+# Test for PATCH portion of that view:
 ```python
 def test_update_grid(self):
         # Create test grid
