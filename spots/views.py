@@ -35,7 +35,7 @@ def retrieve_or_update_animation_order(request, grid_id):
 
         # Find squares for that grid and convert to a list of dictionaries
         squares = [square.to_dict()
-                   for square in Square.objects.filter(grid=grid_id)]
+                   for square in Square.objects.filter(grid=grid_id).order_by('id')]
 
         # Convert Grid object to list dictionary and add squares key equal to squares list
         response_grid = grid.to_dict()
