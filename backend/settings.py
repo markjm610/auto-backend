@@ -82,22 +82,22 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'automate',
-        'USER': 'automate_user',
-        'PASSWORD': 'automate_password',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL')
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'automate',
+#         'USER': 'automate_user',
+#         'PASSWORD': 'automate_password',
+#         'HOST': '',
+#         'PORT': '',
+#     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
 
 
 # Password validation
