@@ -3,7 +3,7 @@
 # What is this?
 ## Django application that servers as a back end server for a React front end using Django REST Framework
 
-## Example view:
+# Example view:
 
 ```python
 @api_view(['GET', 'PATCH'])
@@ -50,7 +50,7 @@ def retrieve_or_update_grid(request, grid_id):
 
 ```
 
-## Test for that view:
+# Test for that view:
 ```python
 def test_update_grid(self):
         # Create test grid
