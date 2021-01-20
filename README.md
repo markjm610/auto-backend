@@ -1,7 +1,7 @@
 ## [Link to application](https://auto-frontend-mark.herokuapp.com/)
 
 # What is this?
-## A Django application that servers as a back end server for a React front end using Django REST Framework
+## Django application that servers as a back end server for a React front end using Django REST Framework
 
 ## Example view:
 
